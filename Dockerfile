@@ -41,4 +41,4 @@ RUN dpkg-checkbuilddeps
 
 # Building .deb's
 #RUN DEB_BUILD_OPTIONS='parallel=8' fakeroot debian/rules binary
-RUN DEB_BUILD_OPTIONS='parallel=8 nocheck' fakeroot debian/rules binary
+#RUN DEB_BUILD_OPTIONS='parallel=8 nocheck' fakeroot debian/rules binary

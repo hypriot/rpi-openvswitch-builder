@@ -2,19 +2,32 @@
 
 Just following the build instructions in https://github.com/openvswitch/ovs/blob/master/INSTALL.Debian.md
 
-## Step 1: build the builder Docker Image, compile Open vSwitch, create .deb packages
+## Step 1: build the builder Docker Image
 `./build.sh`
 ```bash
 #!/bin/sh -x
 docker build -t hypriot/rpi-openvswitch-builder .
 ```
 
-## Step 2: run the builder just copies the created .deb packages to the host machine
+## Step 2: run the builder, compile Open vSwitch, create .deb packages, copies the created .deb packages to the host machine
+Here we're loading all kernel modules for Open vSwitch before running the builder in a Docker Container. With `--cap-add NET_ADMIN` the container can access the `openvswitch` kernel modules.
+
+For compiling and running all tests use
+```
+'DEB_BUILD_OPTIONS="parallel=8" fakeroot debian/rules binary
+```
+Compiling w/o tests just use
+```
+'DEB_BUILD_OPTIONS="parallel=8 nocheck" fakeroot debian/rules binary
+```
+
 `./run-builder.sh`
 ```bash
 #!/bin/sh -x
 mkdir -p ./builds
-docker run --rm -ti -v $(pwd)/builds:/builds hypriot/rpi-openvswitch-builder /bin/bash -c 'cp /src/*.deb /builds/; chmod a+rw /builds/*'
+sudo modprobe openvswitch
+lsmod | grep openvswitch
+docker run --rm -ti --cap-add NET_ADMIN -v $(pwd)/builds:/builds hypriot/rpi-openvswitch-builder /bin/bash -c 'DEB_BUILD_OPTIONS="parallel=8" fakeroot debian/rules binary && cp /src/*.deb /builds/ && chmod a+rw /builds/*'
 ```
 
 ## Results
