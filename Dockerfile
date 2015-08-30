@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     python-zopeinterface \
     python-twisted-conch \
     libtool \
+    dh-autoreconf \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
