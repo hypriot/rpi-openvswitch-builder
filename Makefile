@@ -10,8 +10,7 @@ COMMIT_HASH=$(shell git log --pretty=format:'%h' -n 1)
 DATE=$(shell date -Idate)
 BUILD_DIR=/build/openvswitch/$(DATE)_$(COMMIT_HASH)
 
-default: prepare compile copy
-# upload_to_packagecloud
+default: prepare compile copy upload_to_packagecloud
 
 prepare:
 	mkdir -p $(BUILD_DIR)
