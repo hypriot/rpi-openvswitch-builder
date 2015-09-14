@@ -20,13 +20,13 @@ prepare:
 compile:
 	docker build -t hypriot/rpi-openvswitch-builder .
 	mkdir -p ./builds
-	docker run --rm --cap-add NET_ADMIN -v $(pwd)/builds:/builds hypriot/rpi-openvswitch-builder /bin/bash -c 'modprobe openvswitch && lsmod | grep openvswitch; DEB_BUILD_OPTIONS="parallel=8 nocheck" fakeroot debian/rules binary && cp /src/*.deb /builds/ && chmod a+rw /builds/*'
+	docker run --rm --cap-add NET_ADMIN -v $(shell pwd)/builds:/builds hypriot/rpi-openvswitch-builder /bin/bash -c 'modprobe openvswitch && lsmod | grep openvswitch; DEB_BUILD_OPTIONS="parallel=8 nocheck" fakeroot debian/rules binary && cp /src/*.deb /builds/ && chmod a+rw /builds/*'
 
 copy:
+	pwd && ls -la .
 	cp -r builds/* $(BUILD_DIR)/package/
 	cd $(BUILD_DIR)/package/ && \
-	for i in $(shell ls -1); do \
-	shasum -a 256 $(i) >> openvswitch-$VERSION).sha256
+	for i in $(shell ls -1); do shasum -a 256 $(i) >> openvswitch-$(VERSION).sha256; done
 
 upload_to_packagecloud:
 	echo "upload debian package to package cloud"
