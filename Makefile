@@ -20,7 +20,7 @@ prepare:
 compile:
 	docker build -t hypriot/rpi-openvswitch-builder .
 	mkdir -p ./builds
-	docker run --rm -ti --cap-add NET_ADMIN -v $(pwd)/builds:/builds hypriot/rpi-openvswitch-builder /bin/bash -c 'modprobe openvswitch && lsmod | grep openvswitch; DEB_BUILD_OPTIONS="parallel=8 nocheck" fakeroot debian/rules binary && cp /src/*.deb /builds/ && chmod a+rw /builds/*'
+	docker run --rm --cap-add NET_ADMIN -v $(pwd)/builds:/builds hypriot/rpi-openvswitch-builder /bin/bash -c 'modprobe openvswitch && lsmod | grep openvswitch; DEB_BUILD_OPTIONS="parallel=8 nocheck" fakeroot debian/rules binary && cp /src/*.deb /builds/ && chmod a+rw /builds/*'
 
 copy:
 	cp -r builds/* $(BUILD_DIR)/package/
