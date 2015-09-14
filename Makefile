@@ -10,7 +10,8 @@ COMMIT_HASH=$(shell git log --pretty=format:'%h' -n 1)
 DATE=$(shell date -Idate)
 BUILD_DIR=/build/openvswitch/$(DATE)_$(COMMIT_HASH)
 
-default: prepare compile copy upload_to_packagecloud
+default: prepare compile copy test
+#upload_to_packagecloud
 
 prepare:
 	mkdir -p $(BUILD_DIR)
@@ -32,4 +33,6 @@ upload_to_packagecloud:
 	# see documentation for this api call at https://packagecloud.io/docs/api#resource_packages_method_create
 	curl -X POST https://$(PACKAGECLOUD_API_TOKEN):@packagecloud.io/api/v1/repos/Hypriot/Schatzkiste/packages.json \
 	     -F "package[distro_version_id]=24" -F "package[package_file]=@$(BUILD_DIR)/package/$(PACKAGE_NAME).deb"
- 
+
+test:
+	for i in $(shell ls -1 $(BUILD_DIR)); do echo $(i); done
