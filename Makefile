@@ -31,7 +31,8 @@ compile:
 copy:
 	cp -r builds/* $(BUILD_DIR)/package/
 	echo create checksums
-	$(foreach dir,$(find_files2),$(shell cd $(BUILD_DIR)/package && shasum -a 256 $(dir) >> $(BUILD_DIR)/package/openvswitch-$(VERSION).sha256))
+	echo $(foreach dir,$(find_files2),$(shell cd $(BUILD_DIR)/package && shasum -a 256 $(dir) >> $(BUILD_DIR)/package/openvswitch-$(VERSION).sha256))
+	ls -la .
 	ls -la $(BUILD_DIR)/package/
 
 upload_to_packagecloud:
@@ -39,3 +40,4 @@ upload_to_packagecloud:
 	# see documentation for this api call at https://packagecloud.io/docs/api#resource_packages_method_create
 	curl -X POST https://$(PACKAGECLOUD_API_TOKEN):@packagecloud.io/api/v1/repos/Hypriot/Schatzkiste/packages.json \
 	     -F "package[distro_version_id]=24" -F "package[package_file]=@$(BUILD_DIR)/package/$(PACKAGE_NAME).deb"
+
