@@ -13,6 +13,9 @@ BUILD_DIR=/build/openvswitch/$(DATE)_$(COMMIT_HASH)
 find_files = $(notdir $(wildcard $(BUILD_DIR)/package/*))
 #find_files = $(basename $(notdir $(wildcard $(BUILD_DIR)/package/*)))
 
+find_files1 = $(wildcard $(BUILD_DIR)/package/*)
+find_files2 = $(notdir $(find_files1))
+
 default: prepare compile copy test
 #upload_to_packagecloud
 
@@ -28,7 +31,7 @@ compile:
 copy:
 	cp -r builds/* $(BUILD_DIR)/package/
 	echo create checksums
-	$(foreach dir,$(find_files),$(shell cd $(BUILD_DIR)/package && shasum -a 256 $(dir) >> openvswitch-$(VERSION).sha256))
+	$(foreach dir,$(find_files2),$(shell cd $(BUILD_DIR)/package && shasum -a 256 $(dir) >> openvswitch-$(VERSION).sha256))
 	ls -la $(BUILD_DIR)/package/
 
 upload_to_packagecloud:
@@ -39,4 +42,4 @@ upload_to_packagecloud:
 
 test:
 	echo "test loop"
-	$(foreach dir,$(find_files),$(shell echo $(dir)))
+	echo $(foreach dir,$(find_files2),$(shell echo $(dir)))
