@@ -33,6 +33,7 @@ copy:
 	echo create checksums
 	echo $(foreach dir,$(find_files2),$(shell cd $(BUILD_DIR)/package && shasum -a 256 $(dir) >> $(BUILD_DIR)/package/openvswitch-$(VERSION).sha256))
 	ls -la .
+	ls -la builds/
 	ls -la $(BUILD_DIR)/package/
 
 upload_to_packagecloud:
