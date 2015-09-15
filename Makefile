@@ -13,10 +13,10 @@ BUILD_DIR=/build/openvswitch/$(DATE)_$(COMMIT_HASH)
 find_files = $(notdir $(wildcard $(BUILD_DIR)/package/*))
 #find_files = $(basename $(notdir $(wildcard $(BUILD_DIR)/package/*)))
 
-find_files1 = $(wildcard $(BUILD_DIR)/package/*)
-find_files2 = $(notdir $(find_files1))
+find_files1 := $(wildcard $(BUILD_DIR)/package/*)
+find_files2 := $(notdir $(find_files1))
 
-default: prepare compile copy test
+default: prepare compile copy
 #upload_to_packagecloud
 
 prepare:
@@ -31,7 +31,7 @@ compile:
 copy:
 	cp -r builds/* $(BUILD_DIR)/package/
 	echo create checksums
-	$(foreach dir,$(find_files2),$(shell cd $(BUILD_DIR)/package && shasum -a 256 $(dir) >> openvswitch-$(VERSION).sha256))
+	$(foreach dir,$(find_files2),$(shell cd $(BUILD_DIR)/package && shasum -a 256 $(dir) >> $(BUILD_DIR)/package/openvswitch-$(VERSION).sha256))
 	ls -la $(BUILD_DIR)/package/
 
 upload_to_packagecloud:
@@ -39,7 +39,3 @@ upload_to_packagecloud:
 	# see documentation for this api call at https://packagecloud.io/docs/api#resource_packages_method_create
 	curl -X POST https://$(PACKAGECLOUD_API_TOKEN):@packagecloud.io/api/v1/repos/Hypriot/Schatzkiste/packages.json \
 	     -F "package[distro_version_id]=24" -F "package[package_file]=@$(BUILD_DIR)/package/$(PACKAGE_NAME).deb"
-
-test:
-	echo "test loop"
-	echo $(foreach dir,$(find_files2),$(shell echo $(dir)))
