@@ -10,6 +10,9 @@ COMMIT_HASH=$(shell git log --pretty=format:'%h' -n 1)
 DATE=$(shell date -Idate)
 BUILD_DIR=/build/openvswitch/$(DATE)_$(COMMIT_HASH)
 
+
+
+
 default: prepare compile copy test
 #upload_to_packagecloud
 
@@ -25,14 +28,15 @@ compile:
 copy:
 	pwd && ls -la .
 	cp -r builds/* $(BUILD_DIR)/package/
-	cd $(BUILD_DIR)/package/ && \
-	for i in $(shell ls -1); do shasum -a 256 $(i) >> openvswitch-$(VERSION).sha256; done
+	echo create checksums
+	find_files = $(notdir $(wildcard $(BUILD_DIR)/package/*))
+	$(foreach dir,$(find_files),$(shell cd $(BUILD_DIR)/package && shasum -a 256 $(dir) >> openvswitch-$(VERSION).sha256))
 
 upload_to_packagecloud:
 	echo "upload debian package to package cloud"
 	# see documentation for this api call at https://packagecloud.io/docs/api#resource_packages_method_create
 	curl -X POST https://$(PACKAGECLOUD_API_TOKEN):@packagecloud.io/api/v1/repos/Hypriot/Schatzkiste/packages.json \
 	     -F "package[distro_version_id]=24" -F "package[package_file]=@$(BUILD_DIR)/package/$(PACKAGE_NAME).deb"
-
 test:
-	for i in $(shell ls -1 $(BUILD_DIR)); do echo $(i); done
+	find_files = $(basename $(notdir $(wildcard $(BUILD_DIR)/package/*)))
+	$(foreach dir,$(find_files),$(shell echo $(dir)))
