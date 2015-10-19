@@ -1,6 +1,8 @@
 # rpi-openvswitch-builder
 
-Just following the build instructions in https://github.com/openvswitch/ovs/blob/master/INSTALL.Debian.md
+Builder for Open vSwitch packages compatible to the Raspberry Pi.
+
+It consequently follows the official build instructions on https://github.com/openvswitch/ovs/blob/master/INSTALL.Debian.md
 
 ## Step 1: build the builder Docker Image
 `./build.sh`
